@@ -32,14 +32,14 @@ public class Baba {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyCode()) {
-					case KeyEvent.VK_W: map.move(Direction.UP); break;
-					case KeyEvent.VK_A: map.move(Direction.LEFT); break;
-					case KeyEvent.VK_S: map.move(Direction.DOWN); break;
-					case KeyEvent.VK_D: map.move(Direction.RIGHT); break;
-					case KeyEvent.VK_Z: map.undo(); break;
-					case KeyEvent.VK_R: if (e.isShiftDown()) map.reset(); break;
-					case KeyEvent.VK_ESCAPE: System.exit(0); break;
-					default: return;
+					case KeyEvent.VK_W -> map.move(Direction.UP);
+					case KeyEvent.VK_A -> map.move(Direction.LEFT);
+					case KeyEvent.VK_S -> map.move(Direction.DOWN);
+					case KeyEvent.VK_D -> map.move(Direction.RIGHT);
+					case KeyEvent.VK_Z -> map.undo();
+					case KeyEvent.VK_R -> { if (e.isShiftDown()) map.reset(); }
+					case KeyEvent.VK_ESCAPE -> System.exit(0);
+					default -> { return; }
 				}
 
 				frame.repaint();

@@ -21,7 +21,6 @@ public class Map {
 
 	private final BufferedImage[] textures;
 
-	private final boolean[][] moved;
 	private final boolean[][] activeWords;
 
 	public Map() {
@@ -30,7 +29,6 @@ public class Map {
 		width = 12;
 		height = 12;
 
-		moved = new boolean[height][width];
 		activeWords = new boolean[height][width];
 
 		textures = new BufferedImage[Tile.values().length];
@@ -40,12 +38,6 @@ public class Map {
 	}
 
 	public void move(Direction dir) {
-		for (int y = 0; y < height; ++y) {
-			for (int x = 0; x < width; ++x) {
-				moved[y][x] = false;
-			}
-		}
-
 		Tile[][] mapCopy = new Tile[height][];
 
 		for (int y = 0; y < height; ++y) {
@@ -56,12 +48,16 @@ public class Map {
 
 		boolean moved = false;
 
-		for (int y = 0; y < height; ++y) {
-			for (int x = 0; x < width; ++x) {
-				if (map[y][x] != null && map[y][x].you) {
-					if (move(x, y, dir)) {
-						moved = true;
-					}
+		if (dir.y == 1) {
+			for (int y = height - 1; y >= 0; --y) {
+				if (moveX(dir, y)) {
+					moved = true;
+				}
+			}
+		} else {
+			for (int y = 0; y < height; ++y) {
+				if (moveX(dir, y)) {
+					moved = true;
 				}
 			}
 		}
@@ -75,6 +71,30 @@ public class Map {
 		} else {
 			history.removeLast();
 		}
+	}
+
+	private boolean moveX(Direction dir, int y) {
+		boolean moved = false;
+
+		if (dir.x == 1) {
+			for (int x = width - 1; x >= 0; --x) {
+				if (moveXY(dir, x, y)) {
+					moved = true;
+				}
+			}
+		} else {
+			for (int x = 0; x < width; ++x) {
+				if (moveXY(dir, x, y)) {
+					moved = true;
+				}
+			}
+		}
+
+		return moved;
+	}
+
+	private boolean moveXY(Direction dir, int x, int y) {
+		return map[y][x] != null && map[y][x].you && move(x, y, dir);
 	}
 
 	public void undo() {
@@ -139,8 +159,6 @@ public class Map {
 		if (x == 0 && dir == Direction.LEFT) return false;
 		if (x == width - 1 && dir == Direction.RIGHT) return false;
 
-		if (moved[y][x]) return false;
-
 		int x1 = x + dir.x, y1 = y + dir.y;
 
 		Tile target = map[y1][x1];
@@ -162,7 +180,6 @@ public class Map {
 		}
 
 		map[y1][x1] = map[y][x];
-		moved[y1][x1] = true;
 
 		map[y][x] = null;
 
@@ -241,9 +258,9 @@ public class Map {
 					return 1;
 				} else if (tiles[2].stateWord) {
 					switch (tiles[2]) {
-						case YOU: block.you = true; break;
-						case WIN: block.win = true; break;
-						case MOVE: block.move = true; break;
+						case YOU -> block.you = true;
+						case WIN -> block.win = true;
+						case MOVE -> block.move = true;
 					}
 
 					if (block.you && block.win) {
@@ -284,7 +301,8 @@ public class Map {
 					name = (name.equals("is") ? name.charAt(0) : Character.toUpperCase(name.charAt(0)))
 							+ name.substring(1, name.length() - (name.endsWith("_w") ? 2 : 0));
 
-					textures[i] = Util.createImageFromText(name, TILE_SIZE, TILE_SIZE, new Color(0xdcdcdc), new Color(0, true), wordsFont);
+					textures[i] = Util.createImageFromText(name, TILE_SIZE, TILE_SIZE,
+							new Color(0xdcdcdc), new Color(0, true), wordsFont);
 
 					continue;
 				}

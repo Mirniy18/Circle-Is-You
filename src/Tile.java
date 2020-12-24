@@ -24,20 +24,19 @@ public enum Tile {
 		this.block = block;
 
 		switch (type) {
-			case LOGIC_WORD:
+			case LOGIC_WORD -> {
 				word = true;
 				blockWord = stateWord = false;
-				break;
-			case BLOCK_WORD:
+			}
+			case BLOCK_WORD -> {
 				word = blockWord = true;
 				stateWord = false;
-				break;
-			case STATE_WORD:
+			}
+			case STATE_WORD -> {
 				word = stateWord = true;
 				blockWord = false;
-				break;
-			default:
-				word = blockWord = stateWord = false;
+			}
+			default -> word = blockWord = stateWord = false;
 		}
 	}
 
